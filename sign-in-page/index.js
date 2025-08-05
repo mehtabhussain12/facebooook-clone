@@ -1,33 +1,48 @@
 class Person {
-    constructor(fullName, email, password,id) {
-        this.fullName = fullName;
-        this.email = email;
-        this.password = password
-        this.id = id +1
-    }
+  constructor(fullName, email, password) {
+    this.fullName = fullName;
+    this.email = email;
+    this.password = password;
+    this.id = generateId();
+  }
 }
-let id = 0
-let users = JSON.parse(localStorage.getItem("users")) || [];
-function RegisterForm(event) {
-    event.preventDefault();
 
-    let fullName = document.getElementById("new-username").value
-    let email = document.getElementById("new-email").value
-    let password = document.getElementById("new-password").value
-   let exists = users.find((element) => element.email === email);
+
+function generateId() {
+  const users = getAllUsers();
+  return users.length + 1;
+}
+
+
+function getAllUsers() {
+  const users = localStorage.getItem("users");
+  return users ? JSON.parse(users) : [];
+}
+
+function RegisterForm(event) {
+  event.preventDefault(); 
+
+  let fullName = document.getElementById("new-username").value.trim();
+  let email = document.getElementById("new-email").value.trim();
+  let password = document.getElementById("new-password").value.trim();
+
+  let users = getAllUsers();
+
+  let exists = users.find((element) => element.email === email);
   if (exists) {
     alert("User already exists");
     return;
   }
-    let newUser = new Person(fullName, email, password ,id);
+
+  let newUser = new Person(fullName, email, password);
   users.push(newUser);
   localStorage.setItem("users", JSON.stringify(users));
+
+  console.log("User saved successfully with ID:", newUser.id);
   alert("Registration successful!");
- window.location.href = "/login-page/index.html";
+  window.location.href = "/login-page/index.html";
 
-    document.getElementById("new-username").value = "";
-    document.getElementById("new-email").value = "";
-    document.getElementById("new-password").value = "";
-
-
+  document.getElementById("new-username").value = "";
+  document.getElementById("new-email").value = "";
+  document.getElementById("new-password").value = "";
 }
